@@ -69,7 +69,7 @@ Render.lookAt(render, {
 
 var ragdolls = Composite.create();
 
-for (var i = 0; i < 5; i++) {
+for (var i = 0; i < 4; i++) {
     var ragdoll;
 
     var xPos = 100 + i * 100;
@@ -81,12 +81,12 @@ for (var i = 0; i < 5; i++) {
         // fillStyle: Common.choose(['#ffffff', '#000000']), // Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56']),
         strokeStyle: '#ffffff',
     };
-    var head1 = './img/char/head_1.png';
-    var chest1 = './img/char/chest_1.png';
-    var armU1 = './img/char/arm_upper_1.png';
-    var armL1 = './img/char/arm_lower_1.png';
-    var legU1 = './img/char/leg_upper_1.png';
-    var legL1 = './img/char/leg_lower_1.png';
+    var head = './img/char/head_' + i + '.png';
+    var chest = './img/char/chest_' + i + '.png';
+    var armU = './img/char/arm_upper_' + i + '.png';
+    var armL = './img/char/arm_lower_' + i + '.png';
+    var legU = './img/char/leg_upper_' + i + '.png';
+    var legL = './img/char/leg_lower_' + i + '.png';
 
     ragdoll = createRagdoll(
         xPos, 
@@ -94,12 +94,12 @@ for (var i = 0; i < 5; i++) {
         xScale, 
         yScale, 
         genericRenderOptions,
-        head1,
-        chest1,
-        armU1,
-        armL1,
-        legU1,
-        legL1
+        head,
+        chest,
+        armU,
+        armL,
+        legU,
+        legL
     );
 
     Composite.add(ragdolls, ragdoll);
