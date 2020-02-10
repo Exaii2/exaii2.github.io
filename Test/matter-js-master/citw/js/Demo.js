@@ -191,21 +191,16 @@ var shakeScene = function(engine) {
 */
 
 Events.on(engine, 'afterUpdate', function(event) {
-        for (k = 0; k < ragdolls.length; k++)
-        {
-            for (i = 0; i < ragdolls[k].composites.length; i += 1) {
-                var ragdoll = ragdolls.composites[i],
-                    bounds = Composite.bounds(ragdoll);
-    
-                console.log("Pront "+ k + " | " + i);
+        for (i = 0; i < ragdolls.composites.length; i ++) {
+            var ragdoll = ragdolls.composites[i],
+                bounds = Composite.bounds(ragdoll);
 
-                // move ragdolls back to the top of the screen
-                if (bounds.min.y > render.bounds.max.y + 100) {
-                    Composite.translate(ragdoll1, {
-                        x: -bounds.min.x * 0.9,
-                        y: -render.bounds.max.y - 400
-                    });
-                }
+            // move ragdolls back to the top of the screen
+            if (bounds.min.y > render.bounds.max.y + 100) {
+                Composite.translate(ragdolls.composites[i], {
+                    x: -bounds.min.x * 0.9,
+                    y: -render.bounds.max.y - 400
+                });
             }
         }
 
