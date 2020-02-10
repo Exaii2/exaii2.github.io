@@ -25,24 +25,16 @@ var Engine = Matter.Engine,
 // create an engine
 var engine = Engine.create();
 	world = engine.world;
-
-// create a renderer
 var render = Render.create({
 	element: document.body,
 	engine: engine
 });
+var runner = Runner.create();
 
 // run the engine
 Engine.run(engine);
-
-// run the renderer
 Render.run(render);
-
-// create runner
-var runner = Runner.create();
 Runner.run(runner, engine);
-
-// create two boxes and a ground
 
 var couchBot = Bodies.rectangle(0, 25, 200, 50, { isStatic: true }),
     couchLeft = Bodies.rectangle(-100, -50, 20, 35, { isStatic: true }),
@@ -65,7 +57,6 @@ var couchBot = Bodies.rectangle(0, 25, 200, 50, { isStatic: true }),
     });
 
 	///////////
-	
 	
     // add mouse control
     var mouse = Mouse.create(render.canvas),
@@ -91,7 +82,49 @@ var couchBot = Bodies.rectangle(0, 25, 200, 50, { isStatic: true }),
         });
 
 
-        
+    var ragdolls = Composite.create();
+
+    for (var i = 0; i < 5; i++) {
+        var ragdoll;
+
+        switch (i % 4) {
+            case 0:
+                ragdoll = createRagdoll(100 + i * 100, 200, 1.25, 1, options = {
+                    render: {
+                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
+                    }
+                });
+                break;
+            case 1:
+                ragdoll = createRagdoll(100 + i * 100, 200, 1.6, 1, options = {
+                    render: {
+                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
+                    }
+                });
+                break;
+            case 2:
+                ragdoll = createRagdoll(100 + i * 100, 200, 1, 1.2, options = {
+                    render: {
+                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
+                    }
+                });
+                break;
+            case 3:
+                ragdoll = createRagdoll(100 + i * 100, 200, 1, 1.1, options = {
+                    render: {
+                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
+                    }
+                });
+                break;
+            default:
+                console.log("RIP");
+                break;
+        };
+
+        Composite.add(ragdolls, ragdoll);
+    }
+
+    /*
     var ragdolls = Composites.stack(200, 50, 4, 5, 100, -300, function(x, y, column) {
         switch (x) {
             case 0:
@@ -124,7 +157,7 @@ var couchBot = Bodies.rectangle(0, 25, 200, 50, { isStatic: true }),
                 break;
             };
     });
-        
+    */
 
     /*
 	// This one works!
