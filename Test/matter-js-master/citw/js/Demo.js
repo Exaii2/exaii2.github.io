@@ -45,16 +45,19 @@ Engine.run(engine);
 Render.run(render);
 Runner.run(runner, engine);
 
-var couchBot = Bodies.rectangle(0, 25, 200, 50, { isStatic: true }),
-    couchLeft = Bodies.rectangle(-100, -50, 20, 35, { isStatic: true }),
-    couchRight = Bodies.rectangle(100, -50, 20, 35, { isStatic: true }),
+var couchBot = Bodies.rectangle(0, 25, 300, 50, { isStatic: true }),
+    couchLeft = Bodies.rectangle(-150, -50, 20, 35, { isStatic: true }),
+    couchRight = Bodies.rectangle(150, -50, 20, 35, { isStatic: true }),
 	couch = Body.create({
 		parts: [couchBot, couchLeft, couchRight],
 		isStatic: true
     });
 
+var ground = Bodies.rectangle(600, 600, 300, 50, { isStatic: true });
+
+
 // add all of the bodies to the world
-World.add(world, [couch]);
+World.add(world, [couch, ground]);
 
 ///////////
 
