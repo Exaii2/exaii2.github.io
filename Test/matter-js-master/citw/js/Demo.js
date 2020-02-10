@@ -24,11 +24,20 @@ var Engine = Matter.Engine,
 	
 // create an engine
 var engine = Engine.create();
-	world = engine.world;
+    world = engine.world;
+    
 var render = Render.create({
 	element: document.body,
-	engine: engine
+	engine: engine,
+    options: {
+        width: 1920/2,
+        height: 650,
+        background: '#0f0f13',
+        showAngleIndicator: true,
+        wireframes: false
+    }
 });
+
 var runner = Runner.create();
 
 // run the engine
@@ -39,240 +48,147 @@ Runner.run(runner, engine);
 var couchBot = Bodies.rectangle(0, 25, 200, 50, { isStatic: true }),
     couchLeft = Bodies.rectangle(-100, -50, 20, 35, { isStatic: true }),
     couchRight = Bodies.rectangle(100, -50, 20, 35, { isStatic: true }),
-
-    bodyA = Bodies.rectangle(150, 200, 50, 50),
-	bodyB = Bodies.rectangle(200, 200, 50, 50),
-	bodyC = Bodies.rectangle(300, 200, 50, 50),
-	bodyD = Bodies.rectangle(400, 200, 50, 50),
-	bodyE = Bodies.rectangle(550, 200, 50, 50),
-	bodyF = Bodies.rectangle(700, 200, 50, 50),
-	bodyG = Bodies.circle(400, 100, 25),
-
-	partA = Bodies.rectangle(600, 200, 120, 50),
-	partB = Bodies.rectangle(660, 200, 50, 190),
-
 	couch = Body.create({
 		parts: [couchBot, couchLeft, couchRight],
 		isStatic: true
     });
 
-	///////////
-	
-    // add mouse control
-    var mouse = Mouse.create(render.canvas),
-        mouseConstraint = MouseConstraint.create(engine, {
-            mouse: mouse,
-            constraint: {
-                stiffness: 0.2,
-                render: {
-                    visible: false
-                }
+// add all of the bodies to the world
+World.add(world, [couch]);
+
+///////////
+
+// fit the render viewport to the scene
+Render.lookAt(render, {
+    min: { x: 0, y: 0 },
+    max: { x: 800, y: 600 }
+});
+
+var ragdolls = Composite.create();
+
+for (var i = 0; i < 5; i++) {
+    var ragdoll;
+
+    var xPos = 100 + i * 100;
+    var yPos = 200;
+    var xScale = 1;
+    var yScale = 1;
+
+    var genericRenderOptions = {
+        // fillStyle: Common.choose(['#ffffff', '#000000']), // Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56']),
+        strokeStyle: '#ffffff',
+    };
+    var head1 = './img/char/head_1.png';
+    var chest1 = './img/char/chest_1.png';
+    var armU1 = './img/char/arm_upper_1.png';
+    var armL1 = './img/char/arm_lower_1.png';
+    var legU1 = './img/char/leg_upper_1.png';
+    var legL1 = './img/char/leg_lower_1.png';
+
+    ragdoll = createRagdoll(
+        xPos, 
+        yPos, 
+        xScale, 
+        yScale, 
+        genericRenderOptions,
+        head1,
+        chest1,
+        armU1,
+        armL1,
+        legU1,
+        legL1
+    );
+
+    Composite.add(ragdolls, ragdoll);
+}
+
+World.add(world, [ragdolls]);
+
+//////////////
+
+// create obstacles
+/*
+var obstacles = Composites.stack(200, 50, 2, 2, 10, 10, function(x, y, column) {
+    var sides = Math.round(Common.random(7, 8)),
+        options = {
+            render: {
+                fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
             }
-        });
-
-    World.add(world, mouseConstraint);
-
-        // keep the mouse in sync with rendering
-        render.mouse = mouse;
-
-        // fit the render viewport to the scene
-        Render.lookAt(render, {
-            min: { x: 0, y: 0 },
-            max: { x: 800, y: 600 }
-        });
-
-
-    var ragdolls = Composite.create();
-
-    for (var i = 0; i < 5; i++) {
-        var ragdoll;
-
-        switch (i % 4) {
-            case 0:
-                ragdoll = createRagdoll(100 + i * 100, 200, 1.25, 1, options = {
-                    render: {
-                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-                    }
-                });
-                break;
-            case 1:
-                ragdoll = createRagdoll(100 + i * 100, 200, 1.6, 1, options = {
-                    render: {
-                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-                    }
-                });
-                break;
-            case 2:
-                ragdoll = createRagdoll(100 + i * 100, 200, 1, 1.2, options = {
-                    render: {
-                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-                    }
-                });
-                break;
-            case 3:
-                ragdoll = createRagdoll(100 + i * 100, 200, 1, 1.1, options = {
-                    render: {
-                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-                    }
-                });
-                break;
-            default:
-                console.log("RIP");
-                break;
         };
 
-        Composite.add(ragdolls, ragdoll);
+    switch (Math.round(Common.random(0, 1))) {
+    case 0:
+        if (Common.random() < 0.8) {
+            return Bodies.rectangle(x, y, Common.random(25, 50), Common.random(25, 50), options);
+        } else {
+            return Bodies.rectangle(x, y, Common.random(80, 120), Common.random(25, 30), options);
+        }
+    case 1:
+        return Bodies.polygon(x, y, sides, Common.random(25, 50), options);
     }
+});
 
-    /*
-    var ragdolls = Composites.stack(200, 50, 4, 5, 100, -300, function(x, y, column) {
-        switch (x) {
-            case 0:
-                createRagdoll(200, 200, 1.25, 1, options = {
-                    render: {
-                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-                    }
-                });
-                break;
-            case 1:
-                createRagdoll(200, 200, 1.6, 1, options = {
-                    render: {
-                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-                    }
-                });
-                break;
-            case 2:
-                createRagdoll(200, 200, 1, 1.2, options = {
-                    render: {
-                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-                    }
-                });
-                break;
-            case 3:
-                createRagdoll(200, 200, 1, 1.1, options = {
-                    render: {
-                        fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-                    }
-                });
-                break;
-            };
-    });
-    */
+World.add(world, [obstacles]);
+*/
 
-    /*
-	// This one works!
-    var ragdolls = [
-        createRagdoll(200, 200, 1, 1, options = {
+// add mouse control
+var mouse = Mouse.create(render.canvas),
+    mouseConstraint = MouseConstraint.create(engine, {
+        mouse: mouse,
+        constraint: {
+            stiffness: 0.2,
             render: {
-                fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
+                visible: false
             }
-        }),
-        createRagdoll(200, 200, 1, 1, options = {
-            render: {
-                fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-            }
-        }),
-        createRagdoll(200, 200, 1, 1, options = {
-            render: {
-                fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-            }
-        }),
-        createRagdoll(200, 200, 1, 1, options = {
-            render: {
-                fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-            }
-        })
-    ];
-    */
-
-    World.add(world, [ragdolls]);
-
-    //////////////
-	
-	// create obstacles
-    var obstacles = Composites.stack(200, 50, 2, 2, 10, 10, function(x, y, column) {
-        var sides = Math.round(Common.random(7, 8)),
-            options = {
-                render: {
-                    fillStyle: Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56'])
-                }
-            };
-
-        switch (Math.round(Common.random(0, 1))) {
-        case 0:
-            if (Common.random() < 0.8) {
-                return Bodies.rectangle(x, y, Common.random(25, 50), Common.random(25, 50), options);
-            } else {
-                return Bodies.rectangle(x, y, Common.random(80, 120), Common.random(25, 30), options);
-            }
-        case 1:
-            return Bodies.polygon(x, y, sides, Common.random(25, 50), options);
         }
     });
-	
-	World.add(world, [obstacles]);
 
-	
-
-    // add mouse control
-    var mouse = Mouse.create(render.canvas),
-        mouseConstraint = MouseConstraint.create(engine, {
-            mouse: mouse,
-            constraint: {
-                stiffness: 0.2,
-                render: {
-                    visible: false
-                }
-            }
-        });
-
-    World.add(world, mouseConstraint);
-
-    // keep the mouse in sync with rendering
-    render.mouse = mouse;
-
-    // an example of using mouse events on a mouse
-    Events.on(mouseConstraint, 'mousedown', function(event) {
-        var mousePosition = event.mouse.position;
-        console.log('mousedown at ' + mousePosition.x + ' ' + mousePosition.y);
-        shakeScene(engine);
-    });
-
-    // an example of using mouse events on a mouse
-    Events.on(mouseConstraint, 'mouseup', function(event) {
-        var mousePosition = event.mouse.position;
-        console.log('mouseup at ' + mousePosition.x + ' ' + mousePosition.y);
-    });
-
-    // an example of using mouse events on a mouse
-    Events.on(mouseConstraint, 'startdrag', function(event) {
-        console.log('startdrag', event);
-    });
-
-    // an example of using mouse events on a mouse
-    Events.on(mouseConstraint, 'enddrag', function(event) {
-        console.log('enddrag', event);
-    });
-
-    var shakeScene = function(engine) {
-        var bodies = Composite.allBodies(engine.world);
-
-        for (var i = 0; i < bodies.length; i++) {
-            var body = bodies[i];
-
-            if (!body.isStatic && body.position.y >= 500) {
-                var forceMagnitude = 0.02 * body.mass;
-
-                Body.applyForce(body, body.position, { 
-                    x: (forceMagnitude + Common.random() * forceMagnitude) * Common.choose([1, -1]), 
-                    y: -forceMagnitude + Common.random() * -forceMagnitude
-                });
-            }
-        }
-    };
+World.add(world, mouseConstraint);
 
 // keep the mouse in sync with rendering
 render.mouse = mouse;
+
+// an example of using mouse events on a mouse
+Events.on(mouseConstraint, 'mousedown', function(event) {
+    var mousePosition = event.mouse.position;
+    console.log('mousedown at ' + mousePosition.x + ' ' + mousePosition.y);
+    // shakeScene(engine);
+});
+
+// an example of using mouse events on a mouse
+Events.on(mouseConstraint, 'mouseup', function(event) {
+    var mousePosition = event.mouse.position;
+    console.log('mouseup at ' + mousePosition.x + ' ' + mousePosition.y);
+});
+
+// an example of using mouse events on a mouse
+Events.on(mouseConstraint, 'startdrag', function(event) {
+    console.log('startdrag', event);
+});
+
+// an example of using mouse events on a mouse
+Events.on(mouseConstraint, 'enddrag', function(event) {
+    console.log('enddrag', event);
+});
+
+/*
+var shakeScene = function(engine) {
+    var bodies = Composite.allBodies(engine.world);
+
+    for (var i = 0; i < bodies.length; i++) {
+        var body = bodies[i];
+
+        if (!body.isStatic && body.position.y >= 500) {
+            var forceMagnitude = 0.02 * body.mass;
+
+            Body.applyForce(body, body.position, { 
+                x: (forceMagnitude + Common.random() * forceMagnitude) * Common.choose([1, -1]), 
+                y: -forceMagnitude + Common.random() * -forceMagnitude
+            });
+        }
+    }
+};
+*/
 
 Events.on(engine, 'afterUpdate', function(event) {
         for (k = 0; k < ragdolls.length; k++)
@@ -293,6 +209,7 @@ Events.on(engine, 'afterUpdate', function(event) {
             }
         }
 
+        /*
         for (i = 0; i < obstacles.bodies.length; i += 1) {
             var body = obstacles.bodies[i],
                 bounds = body.bounds;
@@ -305,24 +222,19 @@ Events.on(engine, 'afterUpdate', function(event) {
                 });
             }
         }
+        */
 
         if(dropRagdolls)
         {
             Body.setPosition(couch, { x: 350, y: 500 });
 
-            
-
         } else {
             Body.setPosition(couch, { x: mouse.position.x, y: 500 });
-
 
         }
         // Body.setVelocity(couch, { x: 350, y: 500 });
     });
 	
-
-// add all of the bodies to the world
-World.add(world, [bodyA, bodyB, bodyC, bodyD, bodyE, bodyF, bodyG, couch]);
 
 
 //mouse move input
@@ -418,8 +330,8 @@ window.onload = function() {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 // Changed version from the examples
-function createRagdoll(x, y, scaleX, scaleY, options) {
-    // scale = typeof scale === 'undefined' ? 1 : scale;
+function createRagdoll(x, y, scaleX, scaleY, options, 
+    headRender, chestRender, armRender, armLowerRender, legRender, legLowerRender) {
 
     var Body = Matter.Body,
         Bodies = Matter.Bodies,
@@ -436,8 +348,10 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             radius: [5 * scaleX, 5 * scaleY, 5 * scaleX, 5 * scaleY]
         },
         render: {
-            fillStyle: '#FFBC42'
-        }
+            sprite: {
+                texture: headRender,
+            }
+        },
     }, options);
 
     var chestOptions = Common.extend({
@@ -449,7 +363,9 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             radius: [2 * scaleX, 2 * scaleY, 2 * scaleX, 2 * scaleY]
         },
         render: {
-            fillStyle: '#E0A423'
+            sprite: {
+                texture: chestRender,
+            }
         }
     }, options);
 
@@ -462,15 +378,14 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             radius: [2 * scaleX, 2 * scaleY, 2 * scaleX, 2 * scaleY]
         },
         render: {
-            fillStyle: '#FFBC42'
+            sprite: {
+                texture: armRender,
+            }
         }
     }, options);
 
-    var leftLowerArmOptions = Common.extend({}, leftArmOptions, {
-        render: {
-            fillStyle: '#E59B12'
-        }
-    });
+    var leftLowerArmOptions = Common.extend({}, leftArmOptions);
+    leftLowerArmOptions.render.sprite.texture = armLowerRender;
 
     var rightArmOptions = Common.extend({
         label: 'right-arm',
@@ -481,15 +396,14 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             radius: [2 * scaleX, 2 * scaleY, 2 * scaleX, 2 * scaleY]
         },
         render: {
-            fillStyle: '#FFBC42'
+            sprite: {
+                texture: armRender,
+            }
         }
     }, options);
 
-    var rightLowerArmOptions = Common.extend({}, rightArmOptions, {
-        render: {
-            fillStyle: '#E59B12'
-        }
-    });
+    var rightLowerArmOptions = Common.extend({}, rightArmOptions);
+    rightLowerArmOptions.render.sprite.texture = armLowerRender;
 
     var leftLegOptions = Common.extend({
         label: 'left-leg',
@@ -500,15 +414,14 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             radius: [2 * scaleX, 2 * scaleY, 2 * scaleX, 2 * scaleY]
         },
         render: {
-            fillStyle: '#FFBC42'
+            sprite: {
+                texture: legRender,
+            }
         }
     }, options);
 
-    var leftLowerLegOptions = Common.extend({}, leftLegOptions, {
-        render: {
-            fillStyle: '#E59B12'
-        }
-    });
+    var leftLowerLegOptions = Common.extend({}, leftLegOptions);
+    leftLowerLegOptions.render.sprite.texture = legLowerRender;
 
     var rightLegOptions = Common.extend({
         label: 'right-leg',
@@ -519,15 +432,14 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             radius: [2 * scaleX, 2 * scaleY, 2 * scaleX, 2 * scaleY]
         },
         render: {
-            fillStyle: '#FFBC42'
+            sprite: {
+                texture: legRender,
+            }
         }
     }, options);
 
-    var rightLowerLegOptions = Common.extend({}, rightLegOptions, {
-        render: {
-            fillStyle: '#E59B12'
-        }
-    });
+    var rightLowerLegOptions = Common.extend({}, rightLegOptions);
+    rightLowerLegOptions.render.sprite.texture = legLowerRender;
 
     var head = Bodies.rectangle(x, y - 60 * scaleY, 34 * scaleX, 36 * scaleY, headOptions);
     var chest = Bodies.rectangle(x, y, 55 * scaleX, 80 * scaleY, chestOptions);
@@ -551,7 +463,7 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             y: -8 * scaleY
         },
         bodyB: rightUpperArm,
-        stiffness: 0.6,
+        stiffness: 0.06,
         render: {
             visible: false
         }
@@ -568,7 +480,7 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             y: -8 * scaleY
         },
         bodyB: leftUpperArm,
-        stiffness: 0.6,
+        stiffness: 0.06,
         render: {
             visible: false
         }
@@ -585,7 +497,7 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             y: -10 * scaleY
         },
         bodyB: leftUpperLeg,
-        stiffness: 0.6,
+        stiffness: 0.06,
         render: {
             visible: false
         }
@@ -602,7 +514,7 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             y: -10 * scaleY
         },
         bodyB: rightUpperLeg,
-        stiffness: 0.6,
+        stiffness: 0.06,
         render: {
             visible: false
         }
@@ -619,7 +531,7 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             x: 0,
             y: -25 * scaleY
         },
-        stiffness: 0.6,
+        stiffness: 0.06,
         render: {
             visible: false
         }
@@ -636,7 +548,7 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             x: 0,
             y: -25 * scaleY
         },
-        stiffness: 0.6,
+        stiffness: 0.06,
         render: {
             visible: false
         }
@@ -653,7 +565,7 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             x: 0,
             y: -20 * scaleY
         },
-        stiffness: 0.6,
+        stiffness: 0.06,
         render: {
             visible: false
         }
@@ -670,7 +582,7 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             x: 0,
             y: -20 * scaleY
         },
-        stiffness: 0.6,
+        stiffness: 0.06,
         render: {
             visible: false
         }
@@ -687,12 +599,13 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             y: -35 * scaleY
         },
         bodyB: chest,
-        stiffness: 0.6,
+        stiffness: 0.06,
         render: {
             visible: false
         }
     });
 
+    /*
     var legToLeg = Constraint.create({
         bodyA: leftLowerLeg,
         bodyB: rightLowerLeg,
@@ -701,6 +614,7 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             visible: false
         }
     });
+    */
 
     var person = Composite.create({
         bodies: [
@@ -712,7 +626,7 @@ function createRagdoll(x, y, scaleX, scaleY, options) {
             upperToLowerLeftArm, upperToLowerRightArm, chestToLeftUpperArm, 
             chestToRightUpperArm, headContraint, upperToLowerLeftLeg, 
             upperToLowerRightLeg, chestToLeftUpperLeg, chestToRightUpperLeg,
-            legToLeg
+            // legToLeg
         ]
     });
 
