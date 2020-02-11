@@ -65,6 +65,11 @@ World.add(world, [couch, ground]);
 
 ///////////
 
+var defaultCategory = 0x0001,
+redCategory = 0x0002,
+greenCategory = 0x0004,
+blueCategory = 0x0008;
+
 // fit the render viewport to the scene
 Render.lookAt(render, {
     min: { x: 0, y: 0 },
@@ -105,7 +110,8 @@ for (var i = 0; i < 4; i++) {
         legU,
         legL,
         0.05,
-        0,05
+        0.05,
+        0.025
     );
 
     Composite.add(ragdolls, ragdoll);
@@ -342,7 +348,7 @@ window.onload = function() {
 
 // Changed version from the examples
 function createRagdoll(x, y, scaleX, scaleY, options, 
-    headRender, chestRender, armRender, armLowerRender, legRender, legLowerRender, stiffnessUpper, stiffnessLower) {
+    headRender, chestRender, armRender, armLowerRender, legRender, legLowerRender, stiffnessUpper, stiffnessLower, frictionVal) {
 
     var Body = Matter.Body,
         Bodies = Matter.Bodies,
@@ -353,7 +359,8 @@ function createRagdoll(x, y, scaleX, scaleY, options,
     var headOptions = Common.extend({
         label: 'head',
         collisionFilter: {
-            group: Body.nextGroup(true)
+            group: Body.nextGroup(true),
+            mask: defaultCategory | redCategory
         },
         chamfer: {
             radius: [5 * scaleX, 5 * scaleY, 5 * scaleX, 5 * scaleY]
@@ -363,12 +370,14 @@ function createRagdoll(x, y, scaleX, scaleY, options,
                 texture: headRender,
             }
         },
+        frictionAir: frictionVal,
     }, options);
 
     var chestOptions = Common.extend({
         label: 'chest',
         collisionFilter: {
-            group: Body.nextGroup(true)
+            group: Body.nextGroup(true),
+            mask: defaultCategory | redCategory
         },
         chamfer: {
             radius: [5 * scaleX, 5 * scaleY, 5 * scaleX, 5 * scaleY]
@@ -377,13 +386,15 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             sprite: {
                 texture: chestRender,
             }
-        }
+        },
+        frictionAir: frictionVal,
     }, options);
 
     var leftArmOptions = Common.extend({
         label: 'left-arm',
         collisionFilter: {
-            group: Body.nextGroup(true)
+            group: Body.nextGroup(true),
+            mask: blueCategory
         },
         chamfer: {
             radius: [4 * scaleX, 4 * scaleY, 4 * scaleX, 4 * scaleY]
@@ -392,16 +403,19 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             sprite: {
                 texture: armRender,
             }
-        }
+        },
+        frictionAir: frictionVal,
     }, options);
 
     var leftLowerArmOptions = Common.extend({}, leftArmOptions);
     leftLowerArmOptions.render.sprite.texture = armLowerRender;
+    leftLowerArmOptions.collisionFilter.mask = defaultCategory | redCategory;
 
     var rightArmOptions = Common.extend({
         label: 'right-arm',
         collisionFilter: {
-            group: Body.nextGroup(true)
+            group: Body.nextGroup(true),
+            mask: blueCategory
         },
         chamfer: {
             radius: [4 * scaleX, 4 * scaleY, 4 * scaleX, 4 * scaleY]
@@ -410,16 +424,19 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             sprite: {
                 texture: armRender,
             }
-        }
+        },
+        frictionAir: frictionVal,
     }, options);
 
     var rightLowerArmOptions = Common.extend({}, rightArmOptions);
     rightLowerArmOptions.render.sprite.texture = armLowerRender;
+    rightLowerArmOptions.collisionFilter.mask = defaultCategory | redCategory;
 
     var leftLegOptions = Common.extend({
         label: 'left-leg',
         collisionFilter: {
-            group: Body.nextGroup(true)
+            group: Body.nextGroup(true),
+            mask: blueCategory
         },
         chamfer: {
             radius: [2 * scaleX, 2 * scaleY, 2 * scaleX, 2 * scaleY]
@@ -428,16 +445,19 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             sprite: {
                 texture: legRender,
             }
-        }
+        },
+        frictionAir: frictionVal,
     }, options);
 
     var leftLowerLegOptions = Common.extend({}, leftLegOptions);
     leftLowerLegOptions.render.sprite.texture = legLowerRender;
+    leftLowerLegOptions.collisionFilter.mask = defaultCategory | redCategory;
 
     var rightLegOptions = Common.extend({
         label: 'right-leg',
         collisionFilter: {
-            group: Body.nextGroup(true)
+            group: Body.nextGroup(true),
+            mask: blueCategory
         },
         chamfer: {
             radius: [2 * scaleX, 2 * scaleY, 2 * scaleX, 2 * scaleY]
@@ -446,11 +466,13 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             sprite: {
                 texture: legRender,
             }
-        }
+        },
+        frictionAir: frictionVal,
     }, options);
 
     var rightLowerLegOptions = Common.extend({}, rightLegOptions);
     rightLowerLegOptions.render.sprite.texture = legLowerRender;
+    rightLowerLegOptions.collisionFilter.mask = defaultCategory | redCategory;
 
     var head = Bodies.rectangle(x, y - 60 * scaleY, 34 * scaleX, 36 * scaleY, headOptions);
     var chest = Bodies.rectangle(x, y, 55 * scaleX, 80 * scaleY, chestOptions);
