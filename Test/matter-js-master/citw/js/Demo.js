@@ -30,10 +30,10 @@ var render = Render.create({
 	element: document.body,
 	engine: engine,
     options: {
-        width: 1920/2,
-        height: 650,
+        width: window.screen.width,
+        height: window.screen.height,
         background: '#0f0f13',
-        showAngleIndicator: true,
+        showAngleIndicator: false,
         wireframes: false
     }
 });
@@ -45,15 +45,19 @@ Engine.run(engine);
 Render.run(render);
 Runner.run(runner, engine);
 
-var couchBot = Bodies.rectangle(0, 25, 300, 50, { isStatic: true }),
-    couchLeft = Bodies.rectangle(-150, -50, 20, 35, { isStatic: true }),
-    couchRight = Bodies.rectangle(150, -50, 20, 35, { isStatic: true }),
+var couchColor = '#4ECDC4';
+
+var couchBot = Bodies.rectangle(0, 25, 325, 50, {render: {fillStyle: couchColor}, chamfer: {radius: [5, 5, 5, 5]}}, { isStatic: true }),
+    couchLeft = Bodies.rectangle(-150, -20, 50, 55, {render: {fillStyle: couchColor}, chamfer: {radius: [5, 5, 5, 5]}}, { isStatic: true }),
+    couchRight = Bodies.rectangle(150, -20, 50, 55, {render: {fillStyle: couchColor}, chamfer: {radius: [5, 5, 5, 5]}}, { isStatic: true }),
 	couch = Body.create({
 		parts: [couchBot, couchLeft, couchRight],
 		isStatic: true
     });
 
-var ground = Bodies.rectangle(600, 600, 300, 50, { isStatic: true });
+
+    
+var ground = Bodies.rectangle(650, 500, 450, 25, { isStatic: true });
 
 
 // add all of the bodies to the world
@@ -74,8 +78,8 @@ for (var i = 0; i < 4; i++) {
 
     var xPos = 100 + i * 100;
     var yPos = 200;
-    var xScale = 1;
-    var yScale = 1;
+    var xScale = 1; // Common.choose([1, 1.1, 1.25, 1.6]);
+    var yScale = 1; // Common.choose([1, 1.1, 1.25, 1.6]);
 
     var genericRenderOptions = {
         // fillStyle: Common.choose(['#ffffff', '#000000']), // Common.choose(['#006BA6', '#0496FF', '#D81159', '#8F2D56']),
@@ -99,7 +103,9 @@ for (var i = 0; i < 4; i++) {
         armU,
         armL,
         legU,
-        legL
+        legL,
+        0.05,
+        0,05
     );
 
     Composite.add(ragdolls, ragdoll);
@@ -224,16 +230,15 @@ Events.on(engine, 'afterUpdate', function(event) {
 
         if(dropRagdolls)
         {
-            Body.setPosition(couch, { x: 350, y: 500 });
+            Body.setPosition(couch, { x: 350, y: 400 });
 
         } else {
-            Body.setPosition(couch, { x: mouse.position.x, y: 500 });
+            Body.setPosition(couch, { x: mouse.position.x, y: 400 });
 
         }
         // Body.setVelocity(couch, { x: 350, y: 500 });
     });
 	
-
 
 //mouse move input
 /*
@@ -247,6 +252,14 @@ window.onmousemove = function(e) {
 window.onresize = function(event) {
 	resizeCanvas();
 };
+
+function switchRB()
+{
+    for (i = 0; i < ragdolls.composites.length; i ++) {
+        var ragdoll = ragdolls.composites[i];
+        ragdoll.isStatic = !ragdoll.isStatic;
+    }
+}
 
 function update()
 {
@@ -329,7 +342,7 @@ window.onload = function() {
 
 // Changed version from the examples
 function createRagdoll(x, y, scaleX, scaleY, options, 
-    headRender, chestRender, armRender, armLowerRender, legRender, legLowerRender) {
+    headRender, chestRender, armRender, armLowerRender, legRender, legLowerRender, stiffnessUpper, stiffnessLower) {
 
     var Body = Matter.Body,
         Bodies = Matter.Bodies,
@@ -358,7 +371,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             group: Body.nextGroup(true)
         },
         chamfer: {
-            radius: [2 * scaleX, 2 * scaleY, 2 * scaleX, 2 * scaleY]
+            radius: [5 * scaleX, 5 * scaleY, 5 * scaleX, 5 * scaleY]
         },
         render: {
             sprite: {
@@ -373,7 +386,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             group: Body.nextGroup(true)
         },
         chamfer: {
-            radius: [2 * scaleX, 2 * scaleY, 2 * scaleX, 2 * scaleY]
+            radius: [4 * scaleX, 4 * scaleY, 4 * scaleX, 4 * scaleY]
         },
         render: {
             sprite: {
@@ -391,7 +404,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             group: Body.nextGroup(true)
         },
         chamfer: {
-            radius: [2 * scaleX, 2 * scaleY, 2 * scaleX, 2 * scaleY]
+            radius: [4 * scaleX, 4 * scaleY, 4 * scaleX, 4 * scaleY]
         },
         render: {
             sprite: {
@@ -442,13 +455,30 @@ function createRagdoll(x, y, scaleX, scaleY, options,
     var head = Bodies.rectangle(x, y - 60 * scaleY, 34 * scaleX, 36 * scaleY, headOptions);
     var chest = Bodies.rectangle(x, y, 55 * scaleX, 80 * scaleY, chestOptions);
     var rightUpperArm = Bodies.rectangle(x + 44 * scaleX, y - 15 * scaleY, 20 * scaleX, 40 * scaleY, rightArmOptions);
-    var rightLowerArm = Bodies.rectangle(x + 44 * scaleX, y + 35 * scaleY, 20 * scaleX, 60 * scaleY, rightLowerArmOptions);
+    var rightLowerArm = Bodies.rectangle(x + 44 * scaleX, y + 45 * scaleY, 20 * scaleX, 60 * scaleY, rightLowerArmOptions);
     var leftUpperArm = Bodies.rectangle(x - 44 * scaleX, y - 15 * scaleY, 20 * scaleX, 40 * scaleY, leftArmOptions);
-    var leftLowerArm = Bodies.rectangle(x - 44 * scaleX, y + 35 * scaleY, 20 * scaleX, 60 * scaleY, leftLowerArmOptions);
+    var leftLowerArm = Bodies.rectangle(x - 44 * scaleX, y + 45 * scaleY, 20 * scaleX, 60 * scaleY, leftLowerArmOptions);
     var leftUpperLeg = Bodies.rectangle(x - 20 * scaleX, y + 66 * scaleY, 20 * scaleX, 40 * scaleY, leftLegOptions);
-    var leftLowerLeg = Bodies.rectangle(x - 20 * scaleX, y + 120 * scaleY, 20 * scaleX, 60 * scaleY, leftLowerLegOptions);
+    var leftLowerLeg = Bodies.rectangle(x - 20 * scaleX, y + 125 * scaleY, 20 * scaleX, 60 * scaleY, leftLowerLegOptions);
     var rightUpperLeg = Bodies.rectangle(x + 20 * scaleX, y + 66 * scaleY, 20 * scaleX, 40 * scaleY, rightLegOptions);
-    var rightLowerLeg = Bodies.rectangle(x + 20 * scaleX, y + 120 * scaleY, 20 * scaleX, 60 * scaleY, rightLowerLegOptions);
+    var rightLowerLeg = Bodies.rectangle(x + 20 * scaleX, y + 125 * scaleY, 20 * scaleX, 60 * scaleY, rightLowerLegOptions);
+
+    var headContraint = Constraint.create({
+        bodyA: head,
+        pointA: {
+            x: 0,
+            y: 25 * scaleY
+        },
+        pointB: {
+            x: 0,
+            y: -35 * scaleY
+        },
+        bodyB: chest,
+        stiffness: stiffnessUpper,
+        render: {
+            visible: false
+        }
+    });
 
     var chestToRightUpperArm = Constraint.create({
         bodyA: chest,
@@ -461,7 +491,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             y: -8 * scaleY
         },
         bodyB: rightUpperArm,
-        stiffness: 0.06,
+        stiffness: stiffnessUpper,
         render: {
             visible: false
         }
@@ -478,7 +508,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             y: -8 * scaleY
         },
         bodyB: leftUpperArm,
-        stiffness: 0.06,
+        stiffness: stiffnessUpper,
         render: {
             visible: false
         }
@@ -495,7 +525,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             y: -10 * scaleY
         },
         bodyB: leftUpperLeg,
-        stiffness: 0.06,
+        stiffness: stiffnessUpper,
         render: {
             visible: false
         }
@@ -512,7 +542,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             y: -10 * scaleY
         },
         bodyB: rightUpperLeg,
-        stiffness: 0.06,
+        stiffness: stiffnessUpper,
         render: {
             visible: false
         }
@@ -529,7 +559,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -25 * scaleY
         },
-        stiffness: 0.06,
+        stiffness: stiffnessLower,
         render: {
             visible: false
         }
@@ -546,7 +576,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -25 * scaleY
         },
-        stiffness: 0.06,
+        stiffness: stiffnessLower,
         render: {
             visible: false
         }
@@ -563,7 +593,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -20 * scaleY
         },
-        stiffness: 0.06,
+        stiffness: stiffnessLower,
         render: {
             visible: false
         }
@@ -580,24 +610,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -20 * scaleY
         },
-        stiffness: 0.06,
-        render: {
-            visible: false
-        }
-    });
-
-    var headContraint = Constraint.create({
-        bodyA: head,
-        pointA: {
-            x: 0,
-            y: 25 * scaleY
-        },
-        pointB: {
-            x: 0,
-            y: -35 * scaleY
-        },
-        bodyB: chest,
-        stiffness: 0.06,
+        stiffness: stiffnessLower,
         render: {
             visible: false
         }
