@@ -47,7 +47,7 @@ Runner.run(runner, engine);
 
 var couchColor = '#4ECDC4';
 
-var couchBot = Bodies.rectangle(0, 25, 325, 50, {render: {fillStyle: couchColor}, chamfer: {radius: [5, 5, 5, 5]}}, { isStatic: true }),
+var couchBot = Bodies.rectangle(0, 40, 325, 75, {render: {fillStyle: couchColor}, chamfer: {radius: [5, 5, 5, 5]}}, { isStatic: true }),
     couchLeft = Bodies.rectangle(-150, -20, 50, 55, {render: {fillStyle: couchColor}, chamfer: {radius: [5, 5, 5, 5]}}, { isStatic: true }),
     couchRight = Bodies.rectangle(150, -20, 50, 55, {render: {fillStyle: couchColor}, chamfer: {radius: [5, 5, 5, 5]}}, { isStatic: true }),
 	couch = Body.create({
