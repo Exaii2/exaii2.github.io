@@ -110,8 +110,9 @@ for (var i = 0; i < 4; i++) {
         legU,
         legL,
         0.05,
-        0.05,
-        0.025
+        0.25,
+        0.025,
+        1.55
     );
 
     Composite.add(ragdolls, ragdoll);
@@ -348,7 +349,7 @@ window.onload = function() {
 
 // Changed version from the examples
 function createRagdoll(x, y, scaleX, scaleY, options, 
-    headRender, chestRender, armRender, armLowerRender, legRender, legLowerRender, stiffnessUpper, stiffnessLower, frictionVal) {
+    headRender, chestRender, armRender, armLowerRender, legRender, legLowerRender, stiffnessUpper, stiffnessLower, frictionVal, length) {
 
     var Body = Matter.Body,
         Bodies = Matter.Bodies,
@@ -487,6 +488,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
 
     var headContraint = Constraint.create({
         bodyA: head,
+        bodyB: chest,
         pointA: {
             x: 0,
             y: 25 * scaleY
@@ -495,7 +497,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -35 * scaleY
         },
-        bodyB: chest,
+        length: length,
         stiffness: stiffnessUpper,
         render: {
             visible: false
@@ -504,6 +506,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
 
     var chestToRightUpperArm = Constraint.create({
         bodyA: chest,
+        bodyB: rightUpperArm,
         pointA: {
             x: 30 * scaleX,
             y: -23 * scaleY
@@ -512,7 +515,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -8 * scaleY
         },
-        bodyB: rightUpperArm,
+        length: length,
         stiffness: stiffnessUpper,
         render: {
             visible: false
@@ -521,6 +524,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
 
     var chestToLeftUpperArm = Constraint.create({
         bodyA: chest,
+        bodyB: leftUpperArm,
         pointA: {
             x: -30 * scaleX,
             y: -23 * scaleY
@@ -529,7 +533,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -8 * scaleY
         },
-        bodyB: leftUpperArm,
+        length: length,
         stiffness: stiffnessUpper,
         render: {
             visible: false
@@ -538,6 +542,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
 
     var chestToLeftUpperLeg = Constraint.create({
         bodyA: chest,
+        bodyB: leftUpperLeg,
         pointA: {
             x: -10 * scaleX,
             y: 30 * scaleX
@@ -546,7 +551,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -10 * scaleY
         },
-        bodyB: leftUpperLeg,
+        length: length,
         stiffness: stiffnessUpper,
         render: {
             visible: false
@@ -555,6 +560,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
 
     var chestToRightUpperLeg = Constraint.create({
         bodyA: chest,
+        bodyB: rightUpperLeg,
         pointA: {
             x: 10 * scaleX,
             y: 30 * scaleY
@@ -563,7 +569,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -10 * scaleY
         },
-        bodyB: rightUpperLeg,
+        length: length,
         stiffness: stiffnessUpper,
         render: {
             visible: false
@@ -581,6 +587,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -25 * scaleY
         },
+        length: length,
         stiffness: stiffnessLower,
         render: {
             visible: false
@@ -598,6 +605,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -25 * scaleY
         },
+        length: length,
         stiffness: stiffnessLower,
         render: {
             visible: false
@@ -615,6 +623,7 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -20 * scaleY
         },
+        length: length,
         stiffness: stiffnessLower,
         render: {
             visible: false
@@ -632,22 +641,12 @@ function createRagdoll(x, y, scaleX, scaleY, options,
             x: 0,
             y: -20 * scaleY
         },
+        length: length,
         stiffness: stiffnessLower,
         render: {
             visible: false
         }
     });
-
-    /*
-    var legToLeg = Constraint.create({
-        bodyA: leftLowerLeg,
-        bodyB: rightLowerLeg,
-        stiffness: 0.01,
-        render: {
-            visible: false
-        }
-    });
-    */
 
     var person = Composite.create({
         bodies: [
