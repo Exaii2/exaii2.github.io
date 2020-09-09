@@ -182,7 +182,8 @@ a, a.active, a:active, a:focus, a:hover {
 }
 
 #mainNav .navbar-brand img {
-	height: 35px;
+	height: 50px;
+	width: 50px;
 }
 
 .navbar-brand {
@@ -191,9 +192,12 @@ a, a.active, a:active, a:focus, a:hover {
 	margin-right: 0px;
 }
 
-.navbar-brand span:nth-child(2) {
-	color: 
-	margin-left: 10px;
+
+#clickableLogo img {
+	visibility: inherit;
+}
+#clickableLogo span {
+	visibility: hidden;
 }
 
 #mainNav .navbar-brand span {
@@ -203,11 +207,6 @@ a, a.active, a:active, a:focus, a:hover {
 #mainNav .navbar-brand a:active span {
 	color: #ffffff !important;
 }
-
-.navbar-brand span:nth-child(2) {
-	margin-left: 10px;
-}
-
 
 .navbar-toggle {
 	padding: 9px 7px;
@@ -224,6 +223,11 @@ a, a.active, a:active, a:focus, a:hover {
 	box-shadow: 0px 4px 4px rgb(0,42,82);
 }
 
+#button-collapse {
+	min-width: 50px;
+	min-height: 50px;
+}
+
 /* Tablet, PC */
 
 @media ( min-width : 992px) {
@@ -233,8 +237,12 @@ a, a.active, a:active, a:focus, a:hover {
 		box-shadow: none;
 		border-radius: none;
 	}
-}
 
+	.navbar-brand span:nth-child(2) {
+		visibility: inherit;
+		margin-left: 10px;
+	}	
+}
 
 /* -------------------------------- HEADER STUFF ---------------------------------- */
 
@@ -500,10 +508,8 @@ Mobile first
 	}
 
 	#mainNav .navbar-brand img {
-		height: 45px;
-	}
-	#mainNav .navbar-brand img {
-		height: 50px;
+		min-height: 50px;
+		min-width: 50px;
 		-webkit-transition: all .3s;
 		-moz-transition: all .3s;
 		transition: all .3s;
