@@ -265,7 +265,6 @@ header .wrapper {
 	margin-top: 50px;
 }
 
-
 .fixed-top {
 	top: -5px;
 }
@@ -304,8 +303,8 @@ header .wrapper {
 }
 
 .content-spaced {
-	padding-top: 25px;
-	padding-bottom: 25px;
+	padding-top: 35px;
+	padding-bottom: 35px;
 }
 
 /* -------------------------------- SECTION STUFF ---------------------------------- */
@@ -483,19 +482,22 @@ section h2 {
 	margin: auto;
 }
 
+#landingText {
+	text-align: center;		
+}
+
+/*
+Mobile first
+*/
 
 @media ( min-width : 992px) {
 	.navbar-nav {
 		background-color: transparent;
 	}
-	/*
-	#mainNav .navbar-brand {
-		font-size: 1.2em;
-		-webkit-transition: all .3s;
-		-moz-transition: all .3s;
-		transition: all .3s;
+
+	#landingText {
+		text-align: left;		
 	}
-	*/
 
 	#mainNav .navbar-brand img {
 		height: 45px;
