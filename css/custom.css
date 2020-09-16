@@ -366,7 +366,7 @@ header .wrapper {
 header#Landing {
 	/* 	background-image: url("../img/bg_design.png"); */
 	background-color: #00000000;
-	box-shadow: 0px 0px 500px 50px inset #000000;
+	box-shadow: 0px 0px 500px 150px inset #000000;
 	min-height: 100vh;
 }
 section#About {
