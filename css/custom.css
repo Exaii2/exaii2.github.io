@@ -407,6 +407,15 @@ section.legal {
 	min-height: 100vh;
 }
 
+footer {
+	box-shadow: 0px 0px 150px inset #000000;
+}
+
+.footer-col i {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
 div .cookie-notice {
 	min-height: 25vh;
 	background-color: rgb(0,42,82);
